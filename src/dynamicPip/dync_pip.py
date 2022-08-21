@@ -6,38 +6,11 @@ import sys
 import re
 
 
-# class PIP:
-#     """
-#     Super PIP
-#     """
-#     @staticmethod
-#     def install_single_package(args: str = None) -> int:
-#         """
-#         install single package
-#         :return:
-#         """
-#         from pip._internal.cli.main import main as _main  # isort:skip # noqa
-#
-#         # verify
-#         if args is None or not isinstance(args, str):
-#             raise ValueError('invalid package name')
-#
-#         # generate command line
-#         sys.argv = ["pip", 'install', args]
-#         return _main()
-#
-#     @staticmethod
-#     def list_packages():
-#         from pip._internal.cli.main import main as _main  # isort:skip # noqa
-#         # generate command line
-#         sys.argv = ["pip", 'list']
-#         return _main()
-
-
+# some packages are internal packages which should be excluded.
 # exclude package list
 exclude_packages = {
     'pip': 'pip',
-    'pkg-resources': 'pkg-resources',
+    'pkg_resources': 'pkg_resources',
     'setuptools': 'setuptools',
     'wheel': 'wheel',
 }
@@ -93,5 +66,27 @@ class DynamicPip:
         except Exception:
             raise RuntimeError(f'Target package can not be installed. '
                                f'Please either try again later or install it manually')
+
+        return rtn
+
+    @staticmethod
+    def remove_single_package(*args) -> int:
+        """
+        remove single package
+        :param args: package name list and other parameters.
+                     refer: https://pip.pypa.io/en/stable/cli/pip_install/
+        :return: 0 - success
+        """
+        # verify
+        if args is None:
+            raise ValueError('invalid package name')
+
+        rtn = 0
+
+        try:
+            rtn = subprocess.check_call([sys.executable, '-m', 'pip', 'uninstall', '-y'] + list(args))
+        except Exception:
+            raise RuntimeError(f'Target package can not be removed. '
+                               f'Please either try again later or uninstall it manually')
 
         return rtn

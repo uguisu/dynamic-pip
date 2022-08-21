@@ -3,15 +3,20 @@
 
 from dynamicPip import DynamicPip
 
+# declare target package
+target_package = 'numpy==1.21.6'
 
 # install single package
-# rtn = PIP.install_single_package('numpy==1.21.6')
-# rtn = DynamicPip.install_single_package('numpy==1.21.6', '--force-reinstall')
-rtn = DynamicPip.install_single_package('numpy==1.21.6')
-print(rtn)
+print(f'----- install {target_package} test -----')
+rtn = DynamicPip.install_single_package(target_package)
+print(f'return result code {rtn}\n')
 
-# rtn = PIP.list_packages()
-# print(rtn)
-
+# check package list
+print(f'----- list {target_package} test -----')
 rtn = DynamicPip.list_package()
-print(rtn)
+print(f'return result {rtn}\n')
+
+# uninstall single package
+print(f'----- uninstall {target_package} test -----')
+rtn = DynamicPip.remove_single_package(target_package)
+print(f'return result code {rtn}\n')

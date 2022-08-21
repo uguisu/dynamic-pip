@@ -12,11 +12,12 @@ Refer: https://pip.pypa.io/en/stable/cli/pip_install/
 
 ## Dynamic-Pip
 
-Through `TODO class name` class object, dynamically manage (install, delete, etc.) python packages during the execution of the program. In addition, compared to build-in `pip`, `dynamic-pip` also supports some extended functions.
+Through `DynamicPip` class object, dynamically manage (install, delete, etc.) python packages during the execution of the program. In addition, compared to build-in `pip`, `dynamic-pip` also supports some extended functions.
 
-Install the `numpy` package at runtime
+
+Example: Install the `numpy` package at runtime
 ```py
-rtn = RealTimePip.install_single_package('numpy==1.21.6')
+rtn = DynamicPip.install_single_package('numpy==1.21.6')
 print(rtn)
 ```
 
@@ -25,11 +26,12 @@ print(rtn)
 `python-pip` 
 
 ## TODO
+- [x] support uninstall target package
 - [ ] support multiple index-url
 - [ ] install from the given requirements file
 - [ ] export requirements file
 - [ ] find package exist
-- [ ] auto detect packages with custom version from github
+- [ ] auto-detect packages with custom version from github
 - [ ] build requires map
 - [ ] generate a report about all installed packages
 - [ ] verify hash
