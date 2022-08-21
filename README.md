@@ -35,3 +35,4 @@ print(rtn)
 - [ ] build requires map
 - [ ] generate a report about all installed packages
 - [ ] verify hash
+- [ ] support python test unit
