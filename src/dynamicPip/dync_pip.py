@@ -10,7 +10,6 @@ import re
 # exclude package list
 exclude_packages = {
     'pip': 'pip',
-    'pkg_resources': 'pkg_resources',
     'setuptools': 'setuptools',
     'wheel': 'wheel',
 }
