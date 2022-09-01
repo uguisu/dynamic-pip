@@ -12,9 +12,9 @@ proxy_list = [
 
 mm.mirror_list = proxy_list
 
-# speed_dic, fasted_host = mm.connection_speed_check()
+# speed_dic, fastest_host = mm.connection_speed_check()
 # print(speed_dic)
-# print(fasted_host)
+# print(fastest_host)
 
 
 print('best mirror is ', mm.get_best_mirror())
