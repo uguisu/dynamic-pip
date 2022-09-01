@@ -2,6 +2,8 @@
 # author xin.he
 from icmplib import multiping
 
+from dynamicPip import StaticResources
+
 
 class MirrorManager:
     """
@@ -14,7 +16,7 @@ class MirrorManager:
         """
         # declare a default mirror list
         self._mirror_list = [
-            'pypi.org',
+            StaticResources.DEFAULT_PYPI_HOST,
         ]
 
     def connection_speed_check(self, time_out_second=4):

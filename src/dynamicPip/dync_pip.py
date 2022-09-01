@@ -5,6 +5,7 @@ import subprocess
 import sys
 import re
 
+from dynamicPip import MirrorManager, StaticResources
 
 # some packages are internal packages which should be excluded.
 # exclude package list
@@ -19,6 +20,32 @@ class DynamicPip:
     """
     dynamic pip
     """
+
+    def __init__(self):
+        """
+        init
+        """
+        self.mirror_manager = MirrorManager()
+        # default mirror
+        self.fastest_host = StaticResources.DEFAULT_PYPI_HOST
+
+    def set_mirror_list(self, custom_mirror_list=None):
+        """
+        set custom mirror list and then update the fastest host
+        :param custom_mirror_list: mirror list
+        """
+
+        # verify
+        if custom_mirror_list is not None \
+                and isinstance(custom_mirror_list, list) \
+                and 0 < len(custom_mirror_list):
+            # update mirror list
+            self.mirror_manager.mirror_list = custom_mirror_list
+            # update fastest host
+            self.fastest_host = self.mirror_manager.get_best_mirror()
+        else:
+            raise ValueError('Please setup a valid mirror list and try again.')
+
     @staticmethod
     def list_package() -> dict:
         """
