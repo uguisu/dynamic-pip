@@ -5,39 +5,12 @@ import subprocess
 import sys
 import re
 
+from dynamicPip import MirrorManager, StaticResources
 
-# class PIP:
-#     """
-#     Super PIP
-#     """
-#     @staticmethod
-#     def install_single_package(args: str = None) -> int:
-#         """
-#         install single package
-#         :return:
-#         """
-#         from pip._internal.cli.main import main as _main  # isort:skip # noqa
-#
-#         # verify
-#         if args is None or not isinstance(args, str):
-#             raise ValueError('invalid package name')
-#
-#         # generate command line
-#         sys.argv = ["pip", 'install', args]
-#         return _main()
-#
-#     @staticmethod
-#     def list_packages():
-#         from pip._internal.cli.main import main as _main  # isort:skip # noqa
-#         # generate command line
-#         sys.argv = ["pip", 'list']
-#         return _main()
-
-
+# some packages are internal packages which should be excluded.
 # exclude package list
 exclude_packages = {
     'pip': 'pip',
-    'pkg-resources': 'pkg-resources',
     'setuptools': 'setuptools',
     'wheel': 'wheel',
 }
@@ -47,6 +20,32 @@ class DynamicPip:
     """
     dynamic pip
     """
+
+    def __init__(self):
+        """
+        init
+        """
+        self.mirror_manager = MirrorManager()
+        # default mirror
+        self.fastest_host = StaticResources.DEFAULT_PYPI_HOST
+
+    def set_mirror_list(self, custom_mirror_list=None):
+        """
+        set custom mirror list and then update the fastest host
+        :param custom_mirror_list: mirror list
+        """
+
+        # verify
+        if custom_mirror_list is not None \
+                and isinstance(custom_mirror_list, list) \
+                and 0 < len(custom_mirror_list):
+            # update mirror list
+            self.mirror_manager.mirror_list = custom_mirror_list
+            # update fastest host
+            self.fastest_host = self.mirror_manager.get_best_mirror()
+        else:
+            raise ValueError('Please setup a valid mirror list and try again.')
+
     @staticmethod
     def list_package() -> dict:
         """
@@ -93,5 +92,27 @@ class DynamicPip:
         except Exception:
             raise RuntimeError(f'Target package can not be installed. '
                                f'Please either try again later or install it manually')
+
+        return rtn
+
+    @staticmethod
+    def remove_single_package(*args) -> int:
+        """
+        remove single package
+        :param args: package name list and other parameters.
+                     refer: https://pip.pypa.io/en/stable/cli/pip_install/
+        :return: 0 - success
+        """
+        # verify
+        if args is None:
+            raise ValueError('invalid package name')
+
+        rtn = 0
+
+        try:
+            rtn = subprocess.check_call([sys.executable, '-m', 'pip', 'uninstall', '-y'] + list(args))
+        except Exception:
+            raise RuntimeError(f'Target package can not be removed. '
+                               f'Please either try again later or uninstall it manually')
 
         return rtn
