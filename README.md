@@ -27,6 +27,7 @@ print(rtn)
 
 ## TODO
 - [x] support uninstall target package
+- [x] support python test unit
 - [ ] support multiple index-url
 - [ ] install from the given requirements file
 - [ ] export requirements file
@@ -35,4 +36,3 @@ print(rtn)
 - [ ] build requires map
 - [ ] generate a report about all installed packages
 - [ ] verify hash
-- [ ] support python test unit
