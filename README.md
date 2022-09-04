@@ -28,7 +28,7 @@ print(rtn)
 ## TODO
 - [x] support uninstall target package
 - [x] support python test unit
-- [ ] support multiple index-url
+- [x] support multiple index-url
 - [ ] install from the given requirements file
 - [ ] export requirements file
 - [ ] find package exist

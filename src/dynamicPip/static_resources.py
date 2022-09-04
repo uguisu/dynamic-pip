@@ -7,4 +7,4 @@ class StaticResources:
     """
 
     # default PyPI mirror
-    DEFAULT_PYPI_HOST: str = 'pypi.org'
+    DEFAULT_PYPI_HOST: str = 'https://pypi.org/simple'
