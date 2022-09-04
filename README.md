@@ -60,3 +60,8 @@ del dynamic_pip
 - [ ] install from compressed file
 - [ ] install from FTP
 - [ ] dynamic `import`
+
+## Limitations :construction:
+- [ ] official `inspect` function is still in the experimental stage.
+- [ ] official `--dry-run` function is still in the experimental stage.
+- [ ] official `--report` function is still in the experimental stage.

@@ -66,7 +66,6 @@ class DynamicPip:
 
         return rtn
 
-    # @staticmethod
     def install_single_package(self, *args) -> int:
         """
         install single package
@@ -86,8 +85,8 @@ class DynamicPip:
         try:
             rtn = subprocess.check_call(
                 [sys.executable, '-m', 'pip', 'install'] +
-                list(args) +
-                ['-i', self.fastest_host]
+                ['-i', self.fastest_host] +
+                list(args)
             )
         except Exception:
             raise RuntimeError(f'Target package can not be installed. '
@@ -114,5 +113,35 @@ class DynamicPip:
         except Exception:
             raise RuntimeError(f'Target package can not be removed. '
                                f'Please either try again later or uninstall it manually')
+
+        return rtn
+
+    def install_from_requirements_file(self, requirements_file):
+        """
+        install from requirements file
+        :param requirements_file: requirements file
+        :return: 0 - success
+        """
+
+        # TODO multiprocess install
+
+        # verify
+        if requirements_file is None:
+            raise ValueError('invalid file name')
+
+        # show mirror
+        print(f'The mirror site used by the current operation is: {self.fastest_host}')
+
+        rtn = 0
+
+        try:
+            rtn = subprocess.check_call(
+                [sys.executable, '-m', 'pip', 'install'] +
+                ['-i', self.fastest_host] +
+                ['-r', requirements_file]
+            )
+        except Exception:
+            raise RuntimeError(f'Target package can not be installed. '
+                               f'Please either try again later or install it manually')
 
         return rtn
