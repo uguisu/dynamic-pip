@@ -14,11 +14,31 @@ Refer: https://pip.pypa.io/en/stable/cli/pip_install/
 
 Through `DynamicPip` class object, dynamically manage (install, delete, etc.) python packages during the execution of the program. In addition, compared to build-in `pip`, `dynamic-pip` also supports some extended functions.
 
-
 Example: Install the `numpy` package at runtime
 ```py
-rtn = DynamicPip.install_single_package('numpy==1.21.6')
-print(rtn)
+from dynamicPip import DynamicPip
+
+dynamic_pip = DynamicPip()
+
+# declare target package
+target_package = 'numpy==1.21.6'
+
+# install
+print(f'----- install {target_package} test -----')
+rtn = dynamic_pip.install_single_package(target_package)
+print(f'return result code {rtn}\n')
+
+# check package list
+print(f'----- list {target_package} test -----')
+rtn = DynamicPip.list_package()
+print(f'return result {rtn}\n')
+
+# uninstall single package
+print(f'----- uninstall {target_package} test -----')
+rtn = DynamicPip.remove_single_package(target_package)
+print(f'return result code {rtn}\n')
+
+del dynamic_pip
 ```
 
 # Related package
@@ -36,3 +56,7 @@ print(rtn)
 - [ ] build requires map
 - [ ] generate a report about all installed packages
 - [ ] verify hash
+- [ ] install from local file
+- [ ] install from compressed file
+- [ ] install from FTP
+- [ ] dynamic `import`
