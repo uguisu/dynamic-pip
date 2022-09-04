@@ -145,3 +145,28 @@ class DynamicPip:
                                f'Please either try again later or install it manually')
 
         return rtn
+
+    @staticmethod
+    def remove_from_requirements_file(requirements_file):
+        """
+        remove from requirements file
+        :param requirements_file: requirements file
+        :return: 0 - success
+        """
+
+        # verify
+        if requirements_file is None:
+            raise ValueError('invalid file name')
+
+        rtn = 0
+
+        try:
+            rtn = subprocess.check_call(
+                [sys.executable, '-m', 'pip', 'uninstall', '-y'] +
+                ['-r', requirements_file]
+            )
+        except Exception:
+            raise RuntimeError(f'Target package can not be removed. '
+                               f'Please either try again later or uninstall it manually')
+
+        return rtn

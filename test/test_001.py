@@ -106,7 +106,11 @@ class Test001(unittest.TestCase):
         self.assertTrue('1.21.6' == rtn.get('numpy'))
         self.assertTrue('1.0.2' == rtn.get('scikit-learn'))
 
-        # TODO remove
+        # uninstall
+        print(f'----- uninstall from requirements file test -----')
+        rtn = dynamic_pip.remove_from_requirements_file(target_requirements_file_name)
+        print(f'return result code {rtn}\n')
+        self.assertTrue(0 == rtn)
 
         # remove useless file
         os.remove(target_requirements_file_name)
