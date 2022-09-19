@@ -49,7 +49,7 @@ del dynamic_pip
 - [x] support uninstall target package
 - [x] support python test unit
 - [x] support multiple index-url
-- [ ] install from the given requirements file
+- [x] install / uninstall from the given requirements file
 - [ ] export requirements file
 - [ ] find package exist
 - [ ] auto-detect packages with custom version from github
