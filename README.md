@@ -50,7 +50,7 @@ del dynamic_pip
 - [x] support python test unit
 - [x] support multiple index-url
 - [x] install / uninstall from the given requirements file
-- [ ] export requirements file
+- [x] export requirements file
 - [ ] find package exist
 - [ ] auto-detect packages with custom version from github
 - [ ] build requires map

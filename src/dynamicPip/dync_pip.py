@@ -1,6 +1,6 @@
 # coding=utf-8
 # author xin.he
-
+import os.path
 import re
 import subprocess
 import sys
@@ -170,3 +170,33 @@ class DynamicPip:
                                f'Please either try again later or uninstall it manually')
 
         return rtn
+
+    @staticmethod
+    def export_requirements_file(requirements_file=StaticResources.DEFAULT_REQUIREMENT_FILE):
+        """
+        export requirements file
+        :param requirements_file: requirements file. default file name is 'requirements.txt'
+        :return: 0 - success
+        """
+
+        # verify
+        if requirements_file is None:
+            raise ValueError('invalid file name')
+
+        _pip_lst = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
+        _pip_lst = str(_pip_lst, 'utf-8')
+
+        try:
+            # generate requirement file
+            out_path = os.path.join('.', requirements_file)
+            out_path = os.path.abspath(out_path)
+            with open(out_path, mode='w', encoding='utf-8') as f:
+                for _package_info in _pip_lst:
+                    f.writelines('\n'.join(_package_info))
+
+            print(f'Export to {out_path} success.')
+        except Exception:
+            raise RuntimeError(f'Target requirement file can not be exported. '
+                               f'Please either try again later or execute \'freeze\' command manually')
+
+        return 0
