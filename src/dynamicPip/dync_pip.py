@@ -1,9 +1,9 @@
 # coding=utf-8
 # author xin.he
-
+import os.path
+import re
 import subprocess
 import sys
-import re
 
 from dynamicPip import MirrorManager, StaticResources
 
@@ -34,17 +34,10 @@ class DynamicPip:
         set custom mirror list and then update the fastest host
         :param custom_mirror_list: mirror list
         """
-
-        # verify
-        if custom_mirror_list is not None \
-                and isinstance(custom_mirror_list, list) \
-                and 0 < len(custom_mirror_list):
-            # update mirror list
-            self.mirror_manager.mirror_list = custom_mirror_list
-            # update fastest host
-            self.fastest_host = self.mirror_manager.get_best_mirror()
-        else:
-            raise ValueError('Please setup a valid mirror list and try again.')
+        # update mirror list
+        self.mirror_manager.mirror_list = custom_mirror_list
+        # update fastest host
+        self.fastest_host = self.mirror_manager.get_best_mirror()
 
     @staticmethod
     def list_package() -> dict:
@@ -73,8 +66,7 @@ class DynamicPip:
 
         return rtn
 
-    @staticmethod
-    def install_single_package(*args) -> int:
+    def install_single_package(self, *args) -> int:
         """
         install single package
         :param args: package name list and other parameters.
@@ -85,10 +77,17 @@ class DynamicPip:
         if args is None:
             raise ValueError('invalid package name')
 
+        # show mirror
+        print(f'The mirror site used by the current operation is: {self.fastest_host}')
+
         rtn = 0
 
         try:
-            rtn = subprocess.check_call([sys.executable, '-m', 'pip', 'install'] + list(args))
+            rtn = subprocess.check_call(
+                [sys.executable, '-m', 'pip', 'install'] +
+                ['-i', self.fastest_host] +
+                list(args)
+            )
         except Exception:
             raise RuntimeError(f'Target package can not be installed. '
                                f'Please either try again later or install it manually')
@@ -116,3 +115,88 @@ class DynamicPip:
                                f'Please either try again later or uninstall it manually')
 
         return rtn
+
+    def install_from_requirements_file(self, requirements_file):
+        """
+        install from requirements file
+        :param requirements_file: requirements file
+        :return: 0 - success
+        """
+
+        # TODO multiprocess install
+
+        # verify
+        if requirements_file is None:
+            raise ValueError('invalid file name')
+
+        # show mirror
+        print(f'The mirror site used by the current operation is: {self.fastest_host}')
+
+        rtn = 0
+
+        try:
+            rtn = subprocess.check_call(
+                [sys.executable, '-m', 'pip', 'install'] +
+                ['-i', self.fastest_host] +
+                ['-r', requirements_file]
+            )
+        except Exception:
+            raise RuntimeError(f'Target package can not be installed. '
+                               f'Please either try again later or install it manually')
+
+        return rtn
+
+    @staticmethod
+    def remove_from_requirements_file(requirements_file):
+        """
+        remove from requirements file
+        :param requirements_file: requirements file
+        :return: 0 - success
+        """
+
+        # verify
+        if requirements_file is None:
+            raise ValueError('invalid file name')
+
+        rtn = 0
+
+        try:
+            rtn = subprocess.check_call(
+                [sys.executable, '-m', 'pip', 'uninstall', '-y'] +
+                ['-r', requirements_file]
+            )
+        except Exception:
+            raise RuntimeError(f'Target package can not be removed. '
+                               f'Please either try again later or uninstall it manually')
+
+        return rtn
+
+    @staticmethod
+    def export_requirements_file(requirements_file=StaticResources.DEFAULT_REQUIREMENT_FILE):
+        """
+        export requirements file
+        :param requirements_file: requirements file. default file name is 'requirements.txt'
+        :return: 0 - success
+        """
+
+        # verify
+        if requirements_file is None:
+            raise ValueError('invalid file name')
+
+        _pip_lst = subprocess.check_output([sys.executable, '-m', 'pip', 'freeze'])
+        _pip_lst = str(_pip_lst, 'utf-8')
+
+        try:
+            # generate requirement file
+            out_path = os.path.join('.', requirements_file)
+            out_path = os.path.abspath(out_path)
+            with open(out_path, mode='w', encoding='utf-8') as f:
+                for _package_info in _pip_lst:
+                    f.writelines('\n'.join(_package_info))
+
+            print(f'Export to {out_path} success.')
+        except Exception:
+            raise RuntimeError(f'Target requirement file can not be exported. '
+                               f'Please either try again later or execute \'freeze\' command manually')
+
+        return 0
