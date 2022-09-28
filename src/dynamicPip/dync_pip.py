@@ -6,6 +6,7 @@ import subprocess
 import sys
 
 from dynamicPip import MirrorManager, StaticResources
+from dynamicPip.utility import get_site_packages_path, is_path_exist
 
 # some packages are internal packages which should be excluded.
 # exclude package list
@@ -200,3 +201,95 @@ class DynamicPip:
                                f'Please either try again later or execute \'freeze\' command manually')
 
         return 0
+
+    @staticmethod
+    def generate_requires_map():
+        """
+        generate requires map
+
+        fetch all installed packages of current project, sort out dependencies, and generate a graph
+        """
+
+        def _get_sub_folder_list(target_path: str) -> list:
+            """
+            get sub-folder name as list
+            :param target_path: target path
+            """
+            # target_sub_folder_list = os.listdir(target_path)
+
+            rtn = []
+            for _t_sub in os.listdir(target_path):
+                # generate real path
+                _t_sub = os.path.join(target_path, _t_sub)
+                if os.path.isdir(_t_sub):
+                    # only append folder, skip all files
+                    rtn.append(_t_sub)
+
+            return rtn
+
+        # def _get_meta_data_file_absolute_path(pkg_dict: dict, site_pp) -> dict:
+        #     """
+        #     get METADATA file's absolute path
+        #     :param pkg_dict: package-version dict. key: package; val: version
+        #     :param site_pp: site-package path
+        #     """
+        #
+        #     # get sub-folder list
+        #     sub_folder_list = _get_sub_folder_list(site_pp)
+        #     # declare return dict
+        #     pkg_absolute_path_dict = {}
+        #
+        #     for pkg_name, pkg_ver in pkg_dict.items():
+        #         # set a default value
+        #         pkg_absolute_path_dict[pkg_name] = None
+        #         # generate path by naming rule
+        #         _meta_data_file = os.path.join(site_pp, f'{pkg_name}-{pkg_ver}.dist-info', 'METADATA')
+        #
+        #         if is_path_exist(_meta_data_file):
+        #             # targer METADATA file exist
+        #             pkg_absolute_path_dict[pkg_name] = _meta_data_file
+        #         else:
+        #             # package name do not follow the naming rule, try to find possible path via regex
+        #             # TODO
+        #             pass
+        #
+        #     return pkg_absolute_path_dict
+
+        def _load_meta_data_file_to_dict(site_pp) -> dict:
+            """
+            load METADATA file info to a dict
+            :param site_pp: site-package path
+            :return: package - METADATA dict. key: package name; val: METADATA entity
+            """
+            # get sub-folder list
+            sub_folder_list = _get_sub_folder_list(site_pp)
+            # declare return dict
+            pkg_meta_data_dict = {}
+
+            for _sub_folder in sub_folder_list:
+                # go through each sub folder, load METADATA info
+                _sub_folder = os.path.join(site_pp, _sub_folder, 'METADATA')
+
+                if is_path_exist(_sub_folder):
+
+                    # TODO debug
+                    print('find: ', _sub_folder)
+
+
+
+
+
+
+        # start ==========================
+
+        # fetch all installed packages of current project
+        list_package_dict = DynamicPip.list_package()
+        # get site-package path
+        site_pgk_path = get_site_packages_path()
+
+        # # TODO debug
+        # aaa = _get_meta_data_file_absolute_path(list_package_dict, site_pgk_path)
+        # print(f'aaa = {aaa}')
+
+        # load all METADATA file
+        _load_meta_data_file_to_dict(site_pgk_path)

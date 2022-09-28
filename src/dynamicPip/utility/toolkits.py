@@ -3,6 +3,8 @@
 import sys
 import os
 
+from dynamicPip.entity import MetaDataEntity
+
 
 def is_under_virtual_environment() -> bool:
     """
@@ -83,10 +85,18 @@ def get_site_packages_path() -> str:
     return rtn_site_path
 
 
-def read_meta_data_file(file: str):
+def read_meta_data_file(file: str) -> MetaDataEntity:
     """
     read METADATA file info into entity
     :param file: METADATA file name & path
-    :return: TODO entity
+    :return: MetaDataEntity entity
     """
-    pass
+
+    # TODO importlib.metadata is new function from python 3.8
+    # from importlib.metadata import version
+    # print(version('numpy'))
+
+    with open(file, mode='r', encoding='utf-8') as f:
+        print(f.readlines())
+
+    return None
