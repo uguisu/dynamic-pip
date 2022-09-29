@@ -99,17 +99,17 @@ class MetaDataFileReader:
     METADATA file reader. super class
     """
 
-    def __init__(self, file: str):
+    def __init__(self, cls_name: str):
         """
         init
-        :param file: METADATA file name & path
+        :param cls_name: instance's class name
         """
+        self._class_name = cls_name
 
-        self._file = file
-
-    def read(self) -> MetaDataEntity:
+    def read(self, file: str) -> MetaDataEntity:
         """
         read METADATA file info into entity
+        :param file: METADATA file name & path
         :return: MetaDataEntity entity
         """
         raise AttributeError('This method is not overridden')
@@ -120,19 +120,22 @@ class MetaDataFileReader37(MetaDataFileReader):
     METADATA file reader. (for python version < 3.8)
     """
 
-    def __init__(self, file: str):
+    def __init__(self):
         """
         init
-        :param file: METADATA file name & path
         """
-        super().__init__(file)
+        super().__init__(self.__class__.__name__)
 
-    def read(self) -> MetaDataEntity:
+    def read(self, file: str) -> MetaDataEntity:
         """
         read METADATA file info into entity
+        :param file: METADATA file name & path
         :return: MetaDataEntity entity
         """
-        with open(self._file, mode='r', encoding='utf-8') as f:
+
+        print(f'working with {self._class_name}')
+
+        with open(file, mode='r', encoding='utf-8') as f:
             print(f.readlines())
 
         return None
@@ -143,18 +146,21 @@ class MetaDataFileReader38(MetaDataFileReader):
     METADATA file reader. (for python version >= 3.8)
     """
 
-    def __init__(self, file: str):
+    def __init__(self):
         """
         init
-        :param file: METADATA file name & path
         """
-        super().__init__(file)
+        super().__init__(self.__class__.__name__)
 
-    def read(self) -> MetaDataEntity:
+    def read(self, file: str) -> MetaDataEntity:
         """
         read METADATA file info into entity
+        :param file: METADATA file name & path
         :return: MetaDataEntity entity
         """
+
+        print(f'working with {self._class_name}')
+
         # TODO importlib.metadata is new function from python 3.8
         from importlib.metadata import version
         print(version('numpy'))
