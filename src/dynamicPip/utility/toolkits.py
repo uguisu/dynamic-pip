@@ -3,7 +3,7 @@
 import sys
 import os
 
-from dynamicPip.entity import MetaDataEntity
+from dynamicPip.utility import MetaDataEntity, MetaDataFileReader
 
 
 def is_under_virtual_environment() -> bool:
@@ -85,18 +85,48 @@ def get_site_packages_path() -> str:
     return rtn_site_path
 
 
-def read_meta_data_file(file: str) -> MetaDataEntity:
+def get_meta_data_file_reader(file: str) -> MetaDataFileReader:
     """
-    read METADATA file info into entity
+    get read METADATA file reader
     :param file: METADATA file name & path
-    :return: MetaDataEntity entity
+    :return: MetaDataFileReader instance
     """
 
-    # TODO importlib.metadata is new function from python 3.8
-    # from importlib.metadata import version
-    # print(version('numpy'))
+    if is_current_python_version_less_than_or_equal((3, 7, 9999)):
+        # py version 3.7 ~
+        from dynamicPip.utility import MetaDataFileReader37
+        meta_reader = MetaDataFileReader37(file)
+    else:
+        # py version 3.8 ~
+        from dynamicPip.utility import MetaDataFileReader38
+        meta_reader = MetaDataFileReader38(file)
 
-    with open(file, mode='r', encoding='utf-8') as f:
-        print(f.readlines())
+    # verify type
+    assert isinstance(meta_reader, MetaDataFileReader)
 
-    return None
+    return meta_reader
+
+
+def is_current_python_version_less_than_or_equal(expected_version_tuple: tuple) -> bool:
+    """
+    verify whether current python version is less than or equal to expected value
+    :param expected_version_tuple: expected python version.
+        Python version as tuple (major, minor, patchlevel) of strings.
+    :return: true / false
+    """
+
+    if len(expected_version_tuple) < 2:
+        raise ValueError('Python version as tuple (major, minor, patchlevel)')
+
+    import platform
+
+    current_py_ver = platform.python_version_tuple()
+
+    # get minimum length
+    loop_amount = min(len(expected_version_tuple), len(current_py_ver))
+
+    rtn = True
+    for i in range(loop_amount):
+        rtn = rtn and (int(current_py_ver[i]) <= int(expected_version_tuple[i]))
+
+    return rtn

@@ -65,11 +65,6 @@ class MetaDataEntity:
         self._requires_dist = requires_dist
 
     def __str__(self):
-        # self._name = None
-        # self._version = None
-        # self._summary = None
-        # self._license = None
-        # self._requires_dist = None
         return f'''
             {{
                 name: {self._name},
@@ -97,3 +92,71 @@ class MetaDataEntity:
         :return: hash code
         """
         return hash(self.__str__())
+
+
+class MetaDataFileReader:
+    """
+    METADATA file reader. super class
+    """
+
+    def __init__(self, file: str):
+        """
+        init
+        :param file: METADATA file name & path
+        """
+
+        self._file = file
+
+    def read(self) -> MetaDataEntity:
+        """
+        read METADATA file info into entity
+        :return: MetaDataEntity entity
+        """
+        raise AttributeError('This method is not overridden')
+
+
+class MetaDataFileReader37(MetaDataFileReader):
+    """
+    METADATA file reader. (for python version < 3.8)
+    """
+
+    def __init__(self, file: str):
+        """
+        init
+        :param file: METADATA file name & path
+        """
+        super().__init__(file)
+
+    def read(self) -> MetaDataEntity:
+        """
+        read METADATA file info into entity
+        :return: MetaDataEntity entity
+        """
+        with open(self._file, mode='r', encoding='utf-8') as f:
+            print(f.readlines())
+
+        return None
+
+
+class MetaDataFileReader38(MetaDataFileReader):
+    """
+    METADATA file reader. (for python version >= 3.8)
+    """
+
+    def __init__(self, file: str):
+        """
+        init
+        :param file: METADATA file name & path
+        """
+        super().__init__(file)
+
+    def read(self) -> MetaDataEntity:
+        """
+        read METADATA file info into entity
+        :return: MetaDataEntity entity
+        """
+        # TODO importlib.metadata is new function from python 3.8
+        from importlib.metadata import version
+        print(version('numpy'))
+
+        return None
