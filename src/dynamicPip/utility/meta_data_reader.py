@@ -23,7 +23,7 @@ class MetaDataEntity:
         self._version = None
         self._summary = None
         self._license = None
-        self._requires_dist = []
+        self._requires_dist = {}
 
     @property
     def name(self):
@@ -54,8 +54,8 @@ class MetaDataEntity:
         return self._license
 
     @license.setter
-    def license(self, license):
-        self._license = license
+    def license(self, licenses):
+        self._license = licenses
 
     @property
     def requires_dist(self):
@@ -72,7 +72,7 @@ class MetaDataEntity:
     version: {self._version},
     summary: {self._summary},
     license: {self._license},
-    requires_dist: {self._requires_dist}
+    requires_dist: {'; '.join(self._requires_dist.keys())}
 }}
         '''
 
@@ -133,10 +133,10 @@ class MetaDataFileReader37(MetaDataFileReader):
         :param file: METADATA file name & path
         :return: MetaDataEntity entity
         """
-        def _matcher(rule: str, target_text: str):
+        def _matcher(rule: str, target_text: str, grp=2):
             _match_obj = re.match(rule, target_text)
             if _match_obj is not None:
-                return _match_obj.group(2)
+                return _match_obj.group(grp)
             else:
                 return None
         
@@ -169,9 +169,21 @@ class MetaDataFileReader37(MetaDataFileReader):
                 rtn.license = _m.strip()
 
             # Requires-Dist
-            _m = _matcher(r'^(Requires-Dist:)(.*)', m_l)
+            # Example:
+            # input:
+            #   Requires-Dist: numpy (>=1.17.3) ; platform_machine != "aarch64" and platform_machine != "arm64" and python_version < "3.10"
+            # match:
+            #   [1]: Requires-Dist: numpy (>=1.17.3) ; platform_machine != "aarch64" and platform_machine != "arm64" and python_version < "3.10"
+            # group:
+            #   [1]: Requires-Dist:
+            #   [2]:  numpy (>=1.17.3) ; platform_machine != "aarch64" and platform_machine != "arm64" and python_version < "3.10"
+            # AVOID EXAMPLE:
+            #     Requires-Dist: pytest (>=6.0) ; extra == 'test'
+            _m = _matcher(r'^(Requires-Dist:)(?!.*extra)(.*)', m_l)
             if _m is not None:
-                rtn.requires_dist.append(_m.strip())
+                _m_pkg_name = _matcher(r'(^\S*)', _m.strip(), grp=1)
+                if _m_pkg_name is not None:
+                    rtn.requires_dist[_m_pkg_name.strip()] = _m_pkg_name.strip()
 
         return rtn
 
