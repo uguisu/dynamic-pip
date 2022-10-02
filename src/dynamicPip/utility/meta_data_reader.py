@@ -1,5 +1,6 @@
 # coding=utf-8
 # author xin.he
+import re
 
 
 class MetaDataEntity:
@@ -22,7 +23,7 @@ class MetaDataEntity:
         self._version = None
         self._summary = None
         self._license = None
-        self._requires_dist = None
+        self._requires_dist = []
 
     @property
     def name(self):
@@ -66,13 +67,13 @@ class MetaDataEntity:
 
     def __str__(self):
         return f'''
-            {{
-                name: {self._name},
-                version: {self._version},
-                summary: {self._summary},
-                license: {self._license},
-                requires_dist: {self._requires_dist}
-            }}
+{{
+    name: {self._name},
+    version: {self._version},
+    summary: {self._summary},
+    license: {self._license},
+    requires_dist: {self._requires_dist}
+}}
         '''
 
     def __eq__(self, other):
@@ -132,13 +133,47 @@ class MetaDataFileReader37(MetaDataFileReader):
         :param file: METADATA file name & path
         :return: MetaDataEntity entity
         """
-
+        def _matcher(rule: str, target_text: str):
+            _match_obj = re.match(rule, target_text)
+            if _match_obj is not None:
+                return _match_obj.group(2)
+            else:
+                return None
+        
         print(f'working with {self._class_name}')
 
         with open(file, mode='r', encoding='utf-8') as f:
-            print(f.readlines())
+            meta_lines = f.readlines()
 
-        return None
+        rtn = MetaDataEntity()
+
+        for m_l in meta_lines:
+            # Name
+            _m = _matcher(r'^(Name:)(.*)', m_l)
+            if _m is not None:
+                rtn.name = _m.strip()
+
+            # Version
+            _m = _matcher(r'^(Version:)(.*)', m_l)
+            if _m is not None:
+                rtn.version = _m.strip()
+
+            # Summary
+            _m = _matcher(r'^(Summary:)(.*)', m_l)
+            if _m is not None:
+                rtn.version = _m.strip()
+
+            # License
+            _m = _matcher(r'^(License:)(.*)', m_l)
+            if _m is not None:
+                rtn.license = _m.strip()
+
+            # Requires-Dist
+            _m = _matcher(r'^(Requires-Dist:)(.*)', m_l)
+            if _m is not None:
+                rtn.requires_dist.append(_m.strip())
+
+        return rtn
 
 
 class MetaDataFileReader38(MetaDataFileReader):
