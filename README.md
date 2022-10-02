@@ -51,17 +51,19 @@ del dynamic_pip
 - [x] support multiple index-url
 - [x] install / uninstall from the given requirements file
 - [x] export requirements file
-- [ ] find package exist
-- [ ] auto-detect packages with custom version from github
 - [ ] build requires map
 - [ ] generate a report about all installed packages
-- [ ] verify hash
-- [ ] install from local file
-- [ ] install from compressed file
-- [ ] install from FTP
-- [ ] dynamic `import`
 
 ## Limitations :construction:
 - [ ] official `inspect` function is still in the experimental stage.
 - [ ] official `--dry-run` function is still in the experimental stage.
 - [ ] official `--report` function is still in the experimental stage.
+
+## Future version
+- [ ] find package exist
+- [ ] auto-detect packages with custom version from github
+- [ ] verify hash
+- [ ] install from local file
+- [ ] install from compressed file
+- [ ] install from FTP
+- [ ] dynamic `import`
