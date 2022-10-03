@@ -203,20 +203,21 @@ class DynamicPip:
         return 0
 
     @staticmethod
-    def generate_requires_map():
+    def generate_requires_map() -> dict:
         """
         generate requires map
 
         fetch all installed packages of current project, sort out dependencies, and generate a graph
         """
 
+        from dynamicPip.utility import MetaDataEntity
+        from dynamicPip.utility import get_meta_data_file_reader
+
         def _get_sub_folder_list(target_path: str) -> list:
             """
             get sub-folder name as list
             :param target_path: target path
             """
-            # target_sub_folder_list = os.listdir(target_path)
-
             rtn = []
             for _t_sub in os.listdir(target_path):
                 # generate real path
@@ -226,34 +227,6 @@ class DynamicPip:
                     rtn.append(_t_sub)
 
             return rtn
-
-        # def _get_meta_data_file_absolute_path(pkg_dict: dict, site_pp) -> dict:
-        #     """
-        #     get METADATA file's absolute path
-        #     :param pkg_dict: package-version dict. key: package; val: version
-        #     :param site_pp: site-package path
-        #     """
-        #
-        #     # get sub-folder list
-        #     sub_folder_list = _get_sub_folder_list(site_pp)
-        #     # declare return dict
-        #     pkg_absolute_path_dict = {}
-        #
-        #     for pkg_name, pkg_ver in pkg_dict.items():
-        #         # set a default value
-        #         pkg_absolute_path_dict[pkg_name] = None
-        #         # generate path by naming rule
-        #         _meta_data_file = os.path.join(site_pp, f'{pkg_name}-{pkg_ver}.dist-info', 'METADATA')
-        #
-        #         if is_path_exist(_meta_data_file):
-        #             # targer METADATA file exist
-        #             pkg_absolute_path_dict[pkg_name] = _meta_data_file
-        #         else:
-        #             # package name do not follow the naming rule, try to find possible path via regex
-        #             # TODO
-        #             pass
-        #
-        #     return pkg_absolute_path_dict
 
         def _load_meta_data_file_to_dict(site_pp) -> dict:
             """
@@ -271,25 +244,60 @@ class DynamicPip:
                 _sub_folder = os.path.join(site_pp, _sub_folder, 'METADATA')
 
                 if is_path_exist(_sub_folder):
+                    # find METADATA file
+                    entity_temp = get_meta_data_file_reader().read(_sub_folder)
 
-                    # TODO debug
-                    print('find: ', _sub_folder)
+                    if exclude_packages.get(entity_temp.name) is None:
+                        # skip packages which in excluded list
+                        pkg_meta_data_dict[entity_temp.name] = entity_temp
 
-
-
-
-
+            return pkg_meta_data_dict
 
         # start ==========================
 
-        # fetch all installed packages of current project
-        list_package_dict = DynamicPip.list_package()
         # get site-package path
         site_pgk_path = get_site_packages_path()
 
-        # # TODO debug
-        # aaa = _get_meta_data_file_absolute_path(list_package_dict, site_pgk_path)
-        # print(f'aaa = {aaa}')
-
         # load all METADATA file
-        _load_meta_data_file_to_dict(site_pgk_path)
+        all_pkg_meta_data_as_dict = _load_meta_data_file_to_dict(site_pgk_path)
+
+        # fetch all installed packages of current project
+        pip_package_dict = DynamicPip.list_package()
+
+        # some packages may do not contain METADATA, so merge direct loaded meta file dict and system pip list
+        merged_pgk_entity_dict = {}
+
+        for _meta_pkg in all_pkg_meta_data_as_dict.keys():
+            # try to fetch data from both dict
+            m_pkg_item = all_pkg_meta_data_as_dict.get(_meta_pkg)
+            p_pkg_ver = pip_package_dict.pop(_meta_pkg, None)
+
+            if p_pkg_ver is not None:
+                # direct loaded METADATA file exist in pip list
+                merged_pgk_entity_dict[_meta_pkg] = m_pkg_item
+            else:
+                # TODO find an package which do not managed by PIP ?
+                print(f'Find package {_meta_pkg} do not managed by PIP. Please confirm manually.', file=sys.stderr)
+
+        # all_pkg_meta_data_as_dict should equal to merged_pgk_entity_dict
+        assert len(merged_pgk_entity_dict) == len(all_pkg_meta_data_as_dict)
+
+        # get back to the packages which managed by pip to make sure all packages will be output
+
+        # TODO debug
+        # print(f'current pip list length = {len(pip_package_dict)}')
+
+        for _pip_pkg in pip_package_dict.keys():
+            pip_ver = pip_package_dict.pop(_pip_pkg)
+
+            # generate a dummy entity
+            mde = MetaDataEntity()
+            mde.name = _pip_pkg
+            mde.version = pip_ver
+
+            merged_pgk_entity_dict[_pip_pkg] = mde
+
+            # output warning
+            print(f'invite {_pip_pkg} to relationship map')
+
+        return merged_pgk_entity_dict

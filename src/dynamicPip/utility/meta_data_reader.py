@@ -139,8 +139,9 @@ class MetaDataFileReader37(MetaDataFileReader):
                 return _match_obj.group(grp)
             else:
                 return None
-        
-        print(f'working with {self._class_name}')
+
+        # TODO debug
+        # print(f'working with {self._class_name}')
 
         with open(file, mode='r', encoding='utf-8') as f:
             meta_lines = f.readlines()
@@ -161,7 +162,7 @@ class MetaDataFileReader37(MetaDataFileReader):
             # Summary
             _m = _matcher(r'^(Summary:)(.*)', m_l)
             if _m is not None:
-                rtn.version = _m.strip()
+                rtn.summary = _m.strip()
 
             # License
             _m = _matcher(r'^(License:)(.*)', m_l)
