@@ -12,4 +12,5 @@ from .toolkits import (
     is_path_exist,
     get_site_packages_path,
     get_meta_data_file_reader,
+    beauty_output_doc,
 )

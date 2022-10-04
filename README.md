@@ -41,18 +41,58 @@ print(f'return result code {rtn}\n')
 del dynamic_pip
 ```
 
-# Related package
+Example: Build a requirement map
+```python
+from dynamicPip import DynamicPip
 
-`python-pip` 
+dynamic_pip = DynamicPip()
 
-## TODO
-- [x] support uninstall target package
-- [x] support python test unit
-- [x] support multiple index-url
+dynamic_pip.generate_requires_map()
+```
+
+```mermaid
+%%{ init: { 'flowchart': { 'curve': 'monotoneX' } } }%%
+graph LR
+MyProject([MyProject]):::header
+%% ---- BODY
+pkg_resources[name: pkg_resources<br/>version: 0.0.0<br/>summary: UNKNOWN<br/>license: UNKNOWN<br/>]:::mynode
+joblib[name: joblib<br/>version: 1.1.0<br/>summary: Lightweight pipelining with Python functions<br/>license: BSD<br/>]:::mynode
+threadpoolctl[name: threadpoolctl<br/>version: 3.1.0<br/>summary: threadpoolctl<br/>license: BSD-3-Clause<br/>]:::mynode
+icmplib[name: icmplib<br/>version: 3.0.3<br/>summary: The power to forge ICMP packets and do ping and traceroute.<br/>license: GNU Lesser General Public License v3.0<br/>]:::mynode
+python-dateutil{{name: python-dateutil<br/>version: 2.8.2<br/>summary: Extensions to the standard Python datetime module<br/>license: Dual License<br/>+six}}:::mynode
+numpy[name: numpy<br/>version: 1.21.6<br/>summary: NumPy is the fundamental package for array computing with Python.<br/>license: BSD<br/>]:::mynode
+pandas{{name: pandas<br/>version: 1.3.5<br/>summary: Powerful data structures for data analysis, time series, and statistics<br/>license: BSD-3-Clause<br/>+python-dateutil<br>+pytz<br>+numpy}}:::mynode
+scipy{{name: scipy<br/>version: 1.7.3<br/>summary: SciPy: Scientific Library for Python<br/>license: BSD<br/>+numpy}}:::mynode
+six[name: six<br/>version: 1.16.0<br/>summary: Python 2 and 3 compatibility utilities<br/>license: MIT<br/>]:::mynode
+pytz[name: pytz<br/>version: 2022.2.1<br/>summary: World timezone definitions, modern and historical<br/>license: MIT<br/>]:::mynode
+%% ---- LINK
+MyProject --> pkg_resources
+MyProject --> joblib
+MyProject --> threadpoolctl
+MyProject --> icmplib
+MyProject --> python-dateutil
+python-dateutil --> six
+MyProject --> numpy
+MyProject --> pandas
+pandas --> python-dateutil
+pandas --> pytz
+pandas --> numpy
+MyProject --> scipy
+scipy --> numpy
+MyProject --> six
+MyProject --> pytz
+%% ---- STYLE
+classDef header fill:#FFCC99;
+classDef mynode text-align:left;
+```
+
+## Features
+- [x] support install / uninstall specific package(s) at runtime
 - [x] install / uninstall from the given requirements file
+- [x] support python test unit
+- [x] support multiple index-url, auto-detect fastest PyPI mirror
 - [x] export requirements file
-- [ ] build requires map
-- [ ] generate a report about all installed packages
+- [x] build requires map
 
 ## Limitations :construction:
 - [ ] official `inspect` function is still in the experimental stage.
@@ -60,6 +100,7 @@ del dynamic_pip
 - [ ] official `--report` function is still in the experimental stage.
 
 ## Future version
+- [ ] generate a report about all installed packages
 - [ ] find package exist
 - [ ] auto-detect packages with custom version from github
 - [ ] verify hash

@@ -3,7 +3,7 @@
 import sys
 import os
 
-from dynamicPip.utility import MetaDataEntity, MetaDataFileReader
+from dynamicPip.utility import MetaDataFileReader
 
 
 def is_under_virtual_environment() -> bool:
@@ -127,5 +127,29 @@ def is_current_python_version_less_than_or_equal(expected_version_tuple: tuple) 
     rtn = True
     for i in range(loop_amount):
         rtn = rtn and (int(current_py_ver[i]) <= int(expected_version_tuple[i]))
+
+    return rtn
+
+
+def beauty_output_doc(doc_lines) -> list:
+    """
+    format each line to a more understandable format
+    :param doc_lines: line list, a string or a list
+    :return: formatted line list
+    """
+
+    if isinstance(doc_lines, str):
+        wrk_doc_lines = doc_lines.splitlines()
+    elif isinstance(doc_lines, list):
+        wrk_doc_lines = doc_lines.copy()
+    else:
+        raise ValueError('Only string or list type can be formatted')
+
+    rtn = []
+
+    for original_line in wrk_doc_lines:
+        _l = original_line.strip()
+        if len(_l) > 0:
+            rtn.append(_l)
 
     return rtn

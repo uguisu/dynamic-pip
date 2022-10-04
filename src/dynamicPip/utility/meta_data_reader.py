@@ -67,13 +67,47 @@ class MetaDataEntity:
 
     def __str__(self):
         return f'''
-{{
-    name: {self._name},
-    version: {self._version},
-    summary: {self._summary},
-    license: {self._license},
-    requires_dist: {'; '.join(self._requires_dist.keys())}
-}}
+        {{
+            name: {self._name},
+            version: {self._version},
+            summary: {self._summary},
+            license: {self._license},
+            requires_dist: {'; '.join(self._requires_dist.keys())}
+        }}
+        '''
+
+    def format_to_markdown(self):
+        """
+        format values as markdown doc
+
+        refer doc: https://mermaid-js.github.io/mermaid/#/
+        """
+
+        def _generate_dependence_list():
+            """
+            generate child list and info separator( [] - for no child, {{}} - hexagon node for list)
+            """
+
+            child_list = []
+            for _c in self._requires_dist:
+                child_list.append(f'+{_c}')
+
+            child_str = '<br>'.join(child_list)
+
+            if 0 == len(child_str):
+                # no child
+                l_separator = '['
+                r_separator = ']'
+            else:
+                l_separator = '{{'
+                r_separator = '}}'
+
+            return child_str, l_separator, r_separator
+
+        c_str, l_s, r_s = _generate_dependence_list()
+
+        return f'''
+        {self._name}{l_s}name: {self._name}<br/>version: {self._version}<br/>summary: {self._summary}<br/>license: {self._license}<br/>{c_str}{r_s}:::mynode
         '''
 
     def __eq__(self, other):

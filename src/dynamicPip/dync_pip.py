@@ -203,15 +203,20 @@ class DynamicPip:
         return 0
 
     @staticmethod
-    def generate_requires_map() -> dict:
+    def generate_requires_map(output_file='requirement_map.md'):
         """
         generate requires map
 
         fetch all installed packages of current project, sort out dependencies, and generate a graph
+
+        :param output_file: output result as a markdown file
         """
 
-        from dynamicPip.utility import MetaDataEntity
-        from dynamicPip.utility import get_meta_data_file_reader
+        from dynamicPip.utility import (
+            MetaDataEntity,
+            get_meta_data_file_reader,
+            beauty_output_doc,
+        )
 
         def _get_sub_folder_list(target_path: str) -> list:
             """
@@ -253,6 +258,31 @@ class DynamicPip:
 
             return pkg_meta_data_dict
 
+        def _generate_graph_body(pgk_entity_dict) -> str:
+            """
+            generate graph body
+            """
+            _l = []
+            for k, v in pgk_entity_dict.items():
+                _l.append(v.format_to_markdown())
+
+            return '\n'.join(_l)
+
+        def _generate_graph_link(pgk_entity_dict) -> str:
+            """
+            generate graph link
+            """
+            _l = []
+            for k, v in pgk_entity_dict.items():
+                # add link with main project
+                _l.append(f'MyProject --> {k}')
+
+                for dep_pkg in v.requires_dist.keys():
+                    # add all dependency packages
+                    _l.append(f'{k} --> {dep_pkg}')
+
+            return '\n'.join(_l)
+
         # start ==========================
 
         # get site-package path
@@ -265,6 +295,7 @@ class DynamicPip:
         pip_package_dict = DynamicPip.list_package()
 
         # some packages may do not contain METADATA, so merge direct loaded meta file dict and system pip list
+        # key: package name, val = MetaDataEntity
         merged_pgk_entity_dict = {}
 
         for _meta_pkg in all_pkg_meta_data_as_dict.keys():
@@ -283,10 +314,6 @@ class DynamicPip:
         assert len(merged_pgk_entity_dict) == len(all_pkg_meta_data_as_dict)
 
         # get back to the packages which managed by pip to make sure all packages will be output
-
-        # TODO debug
-        # print(f'current pip list length = {len(pip_package_dict)}')
-
         for _pip_pkg in pip_package_dict.keys():
             pip_ver = pip_package_dict.pop(_pip_pkg)
 
@@ -300,4 +327,26 @@ class DynamicPip:
             # output warning
             print(f'invite {_pip_pkg} to relationship map')
 
-        return merged_pgk_entity_dict
+        # generate output doc
+        body_str = _generate_graph_body(merged_pgk_entity_dict)
+        link_str = _generate_graph_link(merged_pgk_entity_dict)
+
+        md_lines = beauty_output_doc(
+            StaticResources.DEFAULT_RELATIONSHIP_MAP_TEMPLATE.format(
+                body=body_str,
+                links=link_str
+            )
+        )
+
+        try:
+            # generate requirement map file
+            out_path = os.path.join('.', output_file)
+            out_path = os.path.abspath(out_path)
+            with open(out_path, mode='w', encoding='utf-8') as f:
+                f.write('```mermaid\n')
+                f.write('\n'.join(md_lines))
+                f.write('\n```')
+
+            print(f'Export to {out_path} success.')
+        except Exception:
+            raise RuntimeError(f'Target requirement map file can not be exported. ')
