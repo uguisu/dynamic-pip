@@ -86,7 +86,7 @@ classDef header fill:#FFCC99;
 classDef mynode text-align:left;
 ```
 
-## Features
+## Features :point_left:
 - [x] support install / uninstall specific package(s) at runtime
 - [x] install / uninstall from the given requirements file
 - [x] support python test unit
