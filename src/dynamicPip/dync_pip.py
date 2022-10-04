@@ -6,6 +6,7 @@ import subprocess
 import sys
 
 from dynamicPip import MirrorManager, StaticResources
+from dynamicPip.utility import get_site_packages_path, is_path_exist
 
 # some packages are internal packages which should be excluded.
 # exclude package list
@@ -200,3 +201,152 @@ class DynamicPip:
                                f'Please either try again later or execute \'freeze\' command manually')
 
         return 0
+
+    @staticmethod
+    def generate_requires_map(output_file='requirement_map.md'):
+        """
+        generate requires map
+
+        fetch all installed packages of current project, sort out dependencies, and generate a graph
+
+        :param output_file: output result as a markdown file
+        """
+
+        from dynamicPip.utility import (
+            MetaDataEntity,
+            get_meta_data_file_reader,
+            beauty_output_doc,
+        )
+
+        def _get_sub_folder_list(target_path: str) -> list:
+            """
+            get sub-folder name as list
+            :param target_path: target path
+            """
+            rtn = []
+            for _t_sub in os.listdir(target_path):
+                # generate real path
+                _t_sub = os.path.join(target_path, _t_sub)
+                if os.path.isdir(_t_sub):
+                    # only append folder, skip all files
+                    rtn.append(_t_sub)
+
+            return rtn
+
+        def _load_meta_data_file_to_dict(site_pp) -> dict:
+            """
+            load METADATA file info to a dict
+            :param site_pp: site-package path
+            :return: package - METADATA dict. key: package name; val: METADATA entity
+            """
+            # get sub-folder list
+            sub_folder_list = _get_sub_folder_list(site_pp)
+            # declare return dict
+            pkg_meta_data_dict = {}
+
+            for _sub_folder in sub_folder_list:
+                # go through each sub folder, load METADATA info
+                _sub_folder = os.path.join(site_pp, _sub_folder, 'METADATA')
+
+                if is_path_exist(_sub_folder):
+                    # find METADATA file
+                    entity_temp = get_meta_data_file_reader().read(_sub_folder)
+
+                    if exclude_packages.get(entity_temp.name) is None:
+                        # skip packages which in excluded list
+                        pkg_meta_data_dict[entity_temp.name] = entity_temp
+
+            return pkg_meta_data_dict
+
+        def _generate_graph_body(pgk_entity_dict) -> str:
+            """
+            generate graph body
+            """
+            _l = []
+            for k, v in pgk_entity_dict.items():
+                _l.append(v.format_to_markdown())
+
+            return '\n'.join(_l)
+
+        def _generate_graph_link(pgk_entity_dict) -> str:
+            """
+            generate graph link
+            """
+            _l = []
+            for k, v in pgk_entity_dict.items():
+                # add link with main project
+                _l.append(f'MyProject --> {k}')
+
+                for dep_pkg in v.requires_dist.keys():
+                    # add all dependency packages
+                    _l.append(f'{k} --> {dep_pkg}')
+
+            return '\n'.join(_l)
+
+        # start ==========================
+
+        # get site-package path
+        site_pgk_path = get_site_packages_path()
+
+        # load all METADATA file
+        all_pkg_meta_data_as_dict = _load_meta_data_file_to_dict(site_pgk_path)
+
+        # fetch all installed packages of current project
+        pip_package_dict = DynamicPip.list_package()
+
+        # some packages may do not contain METADATA, so merge direct loaded meta file dict and system pip list
+        # key: package name, val = MetaDataEntity
+        merged_pgk_entity_dict = {}
+
+        for _meta_pkg in all_pkg_meta_data_as_dict.keys():
+            # try to fetch data from both dict
+            m_pkg_item = all_pkg_meta_data_as_dict.get(_meta_pkg)
+            p_pkg_ver = pip_package_dict.pop(_meta_pkg, None)
+
+            if p_pkg_ver is not None:
+                # direct loaded METADATA file exist in pip list
+                merged_pgk_entity_dict[_meta_pkg] = m_pkg_item
+            else:
+                # TODO find an package which do not managed by PIP ?
+                print(f'Find package {_meta_pkg} do not managed by PIP. Please confirm manually.', file=sys.stderr)
+
+        # all_pkg_meta_data_as_dict should equal to merged_pgk_entity_dict
+        assert len(merged_pgk_entity_dict) == len(all_pkg_meta_data_as_dict)
+
+        # get back to the packages which managed by pip to make sure all packages will be output
+        for _pip_pkg in pip_package_dict.keys():
+            pip_ver = pip_package_dict.pop(_pip_pkg)
+
+            # generate a dummy entity
+            mde = MetaDataEntity()
+            mde.name = _pip_pkg
+            mde.version = pip_ver
+
+            merged_pgk_entity_dict[_pip_pkg] = mde
+
+            # output warning
+            print(f'invite {_pip_pkg} to relationship map')
+
+        # generate output doc
+        body_str = _generate_graph_body(merged_pgk_entity_dict)
+        link_str = _generate_graph_link(merged_pgk_entity_dict)
+
+        md_lines = beauty_output_doc(
+            StaticResources.DEFAULT_RELATIONSHIP_MAP_TEMPLATE.format(
+                body=body_str,
+                links=link_str
+            )
+        )
+
+        try:
+            # generate requirement map file
+            out_path = os.path.join('.', output_file)
+            out_path = os.path.abspath(out_path)
+            with open(out_path, mode='w', encoding='utf-8') as f:
+                f.write('```mermaid\n')
+                f.write('\n'.join(md_lines))
+                f.write('\n```')
+
+            print(f'Export to {out_path} success.')
+        except Exception:
+            raise RuntimeError(f'Target requirement map file can not be exported. ')
