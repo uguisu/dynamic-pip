@@ -189,7 +189,7 @@ class DynamicPip:
 
         try:
             # generate requirement file
-            out_path = os.path.join('.', requirements_file)
+            out_path = os.path.join('', requirements_file)
             out_path = os.path.abspath(out_path)
             with open(out_path, mode='w', encoding='utf-8') as f:
                 for _package_info in _pip_lst:
@@ -340,7 +340,7 @@ class DynamicPip:
 
         try:
             # generate requirement map file
-            out_path = os.path.join('.', output_file)
+            out_path = os.path.join('', output_file)
             out_path = os.path.abspath(out_path)
             with open(out_path, mode='w', encoding='utf-8') as f:
                 f.write('```mermaid\n')

@@ -1,5 +1,13 @@
 # coding=utf-8
 # author xin.he
+#
+# build:
+#     rm -rf ./build ./dist ./dynamic_pip.egg-info/ && \
+#     python setup.py sdist bdist_wheel
+#
+# install
+#     pip install --upgrade dynamic_pip-XXXX-pyXX-none-any.whl
+#
 from dynamicPip import __version__
 from setuptools import setup, find_packages
 
@@ -40,7 +48,7 @@ setup(
     name=pkg_name,
     version=__version__,
     author='xin.he',
-    author_email='xin.he@dynamic-pip.com',
+    author_email='unknow@dynamic-pip.com',
     url='https://github.com/uguisu/dynamic-pip',
     download_url='https://github.com/uguisu/dynamic-pip/tags',
     python_requires='>=3.6',
@@ -70,7 +78,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'dynamic-pip = dynamicPip.dync_pip.__main__:exec'
+            'dypip = dynamicPip.__main__:main'
         ]
     },
 
