@@ -32,15 +32,12 @@ def _argparse():
                         help='Output file\'s name')
 
     return parser.parse_args(), parser
-    # return parser
 
 
 def main():
     """
     main method
     """
-    # __p = _argparse()
-    # args = __p.parse_args()
     args, __p = _argparse()
 
     dynamic_pip = DynamicPip()
