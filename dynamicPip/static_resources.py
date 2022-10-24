@@ -23,3 +23,5 @@ class StaticResources:
     classDef header fill:#FFCC99;
     classDef mynode text-align:left;
     '''
+
+    SUCCESS_EXIT: int = 0

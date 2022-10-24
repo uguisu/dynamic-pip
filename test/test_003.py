@@ -4,7 +4,7 @@
 import os
 import unittest
 
-from dynamicPip import DynamicPip, StaticResources
+from dynamicPip import DynamicPip
 
 # declare target package
 target_package = 'numpy==1.21.6'
