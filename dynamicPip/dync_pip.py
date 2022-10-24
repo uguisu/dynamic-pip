@@ -189,7 +189,7 @@ class DynamicPip:
 
         try:
             # generate requirement file
-            out_path = os.path.join('.', requirements_file)
+            out_path = os.path.join('', requirements_file)
             out_path = os.path.abspath(out_path)
             with open(out_path, mode='w', encoding='utf-8') as f:
                 for _package_info in _pip_lst:
@@ -310,12 +310,9 @@ class DynamicPip:
                 # TODO find an package which do not managed by PIP ?
                 print(f'Find package {_meta_pkg} do not managed by PIP. Please confirm manually.', file=sys.stderr)
 
-        # all_pkg_meta_data_as_dict should equal to merged_pgk_entity_dict
-        assert len(merged_pgk_entity_dict) == len(all_pkg_meta_data_as_dict)
-
         # get back to the packages which managed by pip to make sure all packages will be output
         for _pip_pkg in pip_package_dict.keys():
-            pip_ver = pip_package_dict.pop(_pip_pkg)
+            pip_ver = pip_package_dict.get(_pip_pkg)
 
             # generate a dummy entity
             mde = MetaDataEntity()
@@ -326,6 +323,12 @@ class DynamicPip:
 
             # output warning
             print(f'invite {_pip_pkg} to relationship map')
+
+        # all_pkg_meta_data_as_dict should equal to merged_pgk_entity_dict
+        if len(merged_pgk_entity_dict) != len(all_pkg_meta_data_as_dict):
+            # some package name might be a little different. 'pkg_resources' and 'pkg-resources' for instance are
+            # actually the same package
+            print('WARNING!!! Some package names have exceptions.')
 
         # generate output doc
         body_str = _generate_graph_body(merged_pgk_entity_dict)
@@ -340,7 +343,7 @@ class DynamicPip:
 
         try:
             # generate requirement map file
-            out_path = os.path.join('.', output_file)
+            out_path = os.path.join('', output_file)
             out_path = os.path.abspath(out_path)
             with open(out_path, mode='w', encoding='utf-8') as f:
                 f.write('```mermaid\n')

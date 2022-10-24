@@ -6,6 +6,12 @@ _Photo by David Dibert: https://www.pexels.com/photo/green-and-gray-evergreen-ca
 
 Help users to dynamically manage python package resources and bid farewell to the constraints of the `requirements.txt` file.
 
+<p align="center">
+    <img src="https://img.shields.io/badge/Python-3.7%2F3.8%2F3.9-blue" alt="valid for python3.7/3.8/3.9" />
+    <img src="https://img.shields.io/badge/Apache-2.0-blue" alt="license" />
+</p>
+
+
 ## Build-in `pip`
 
 Refer: https://pip.pypa.io/en/stable/cli/pip_install/
@@ -48,6 +54,18 @@ from dynamicPip import DynamicPip
 dynamic_pip = DynamicPip()
 
 dynamic_pip.generate_requires_map()
+```
+
+Example: List all installed packages. (`pip list``)
+```python
+# check package as dict. (key = package name, value = version )
+rtn = dynamic_pip.list_package()
+print(f'return result {rtn}\n')
+```
+
+Example: Generate a requirement map
+```python
+dynamic_pip.generate_requires_map(target_output_requirements__map_file_name)
 ```
 
 ```mermaid
