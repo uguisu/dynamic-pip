@@ -56,7 +56,7 @@ dynamic_pip = DynamicPip()
 dynamic_pip.generate_requires_map()
 ```
 
-Example: List all installed packages. (`pip list``)
+Example: List all installed packages. (`pip list`)
 ```python
 # check package as dict. (key = package name, value = version )
 rtn = dynamic_pip.list_package()
