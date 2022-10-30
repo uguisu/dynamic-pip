@@ -31,7 +31,9 @@ def long_description_load(filename):
 
     # remove logo
     _long_description = _long_description.replace(RAW_LOGO, PYPI_LOGO)
-    
+    _long_description = _long_description.replace(':point_left:', '')
+    _long_description = _long_description.replace(':construction:', '')
+
     rtn = []
     is_mermaid_area = False
     for ln in _long_description.splitlines(keepends=False):
