@@ -14,6 +14,8 @@ exclude_packages = {
     'pip': 'pip',
     'setuptools': 'setuptools',
     'wheel': 'wheel',
+    'pkg-resources': 'pkg-resources',
+    'pkg_resources': 'pkg_resources',
 }
 
 
