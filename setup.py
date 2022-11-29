@@ -2,11 +2,17 @@
 # author xin.he
 #
 # build:
-#     rm -rf ./build ./dist ./dynamic_pip.egg-info/ && \
-#     python setup.py sdist bdist_wheel
+#     rm -rf ./build ./dist ./dynamic_pip.egg-info/ && python setup.py sdist bdist_wheel
 #
-# install
+# upload:
+#     twine check ./dist/*
+#     twine upload dist/*
+#
+# install local:
 #     pip install --upgrade dynamic_pip-XXXX-pyXX-none-any.whl
+#
+# install from PyPi:
+#     pip install dynamic_pip
 #
 from dynamicPip import __version__
 from setuptools import setup, find_packages
@@ -31,7 +37,9 @@ def long_description_load(filename):
 
     # remove logo
     _long_description = _long_description.replace(RAW_LOGO, PYPI_LOGO)
-    
+    _long_description = _long_description.replace(':point_left:', '')
+    _long_description = _long_description.replace(':construction:', '')
+
     rtn = []
     is_mermaid_area = False
     for ln in _long_description.splitlines(keepends=False):
@@ -85,7 +93,7 @@ setup(
     long_description_content_type='text/markdown',
     packages=find_packages(),
     zip_safe=False,
-    setup_requires=['setuptools>=18.0', 'wheel'],
+    setup_requires=['setuptools>=60.2.0', 'wheel'],
     install_requires=reqs,
     include_package_data=True,
 

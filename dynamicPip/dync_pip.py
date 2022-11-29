@@ -14,6 +14,8 @@ exclude_packages = {
     'pip': 'pip',
     'setuptools': 'setuptools',
     'wheel': 'wheel',
+    'pkg-resources': 'pkg-resources',
+    'pkg_resources': 'pkg_resources',
 }
 
 
@@ -29,6 +31,8 @@ class DynamicPip:
         self.mirror_manager = MirrorManager()
         # default mirror
         self.fastest_host = StaticResources.DEFAULT_PYPI_HOST
+        # extra index url
+        self._extra_index_url = None
 
     def set_mirror_list(self, custom_mirror_list=None):
         """
@@ -39,6 +43,26 @@ class DynamicPip:
         self.mirror_manager.mirror_list = custom_mirror_list
         # update fastest host
         self.fastest_host = self.mirror_manager.get_best_mirror()
+
+    @property
+    def extra_index_url(self):
+        """
+        get "extra-index-url"
+        """
+        return self._extra_index_url
+
+    @extra_index_url.setter
+    def extra_index_url(self, extra_index_url: str = ''):
+        """
+        set "extra-index-url"
+        :param extra_index_url: an url target to extra index
+        """
+        if extra_index_url is None or '' == extra_index_url.strip():
+            # skip blank value
+            self._extra_index_url = None
+            return
+        # TODO URL check
+        self._extra_index_url = extra_index_url
 
     @staticmethod
     def list_package() -> dict:
@@ -83,12 +107,17 @@ class DynamicPip:
 
         rtn = 0
 
+        cli_array = [sys.executable, '-m', 'pip', 'install']
+        cli_array += ['-i', self.fastest_host]
+
+        # determine extra_index_url
+        if self.extra_index_url is not None and '' != self.extra_index_url.strip():
+            cli_array += ['--extra-index-url', self.extra_index_url]
+
+        cli_array += list(args)
+
         try:
-            rtn = subprocess.check_call(
-                [sys.executable, '-m', 'pip', 'install'] +
-                ['-i', self.fastest_host] +
-                list(args)
-            )
+            rtn = subprocess.check_call(cli_array)
         except Exception:
             raise RuntimeError(f'Target package can not be installed. '
                                f'Please either try again later or install it manually')

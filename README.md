@@ -109,6 +109,7 @@ classDef mynode text-align:left;
 - [x] install / uninstall from the given requirements file
 - [x] support python test unit
 - [x] support multiple index-url, auto-detect fastest PyPI mirror
+- [x] support extra-index-url
 - [x] export requirements file
 - [x] build requires map
 
@@ -126,19 +127,3 @@ classDef mynode text-align:left;
 - [ ] install from compressed file
 - [ ] install from FTP
 - [ ] dynamic `import`
-
-## Build from source  code
-In some cases, you may want to build this project from code. Consider execute follow command.
-
-```shell
-rm -rf ./build ./dist ./dynamic_pip.egg-info/ && python setup.py sdist bdist_wheel
-```
-
-Update load to PyPi
-```shell
-twine check ./dist/*
-# Checking ./dist/dynamic_pip-1.0-py3-none-any.whl: PASSED
-# Checking ./dist/dynamic-pip-1.0.tar.gz: PASSED
-
-twine upload dist/*
-```
