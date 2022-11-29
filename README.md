@@ -109,6 +109,7 @@ classDef mynode text-align:left;
 - [x] install / uninstall from the given requirements file
 - [x] support python test unit
 - [x] support multiple index-url, auto-detect fastest PyPI mirror
+- [x] support extra-index-url
 - [x] export requirements file
 - [x] build requires map
 

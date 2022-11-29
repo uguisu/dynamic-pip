@@ -58,6 +58,40 @@ class Test002(unittest.TestCase):
         mirror_result = mm.get_best_mirror()
         self.assertEqual(local_host, mirror_result[0])
 
+    def test_use_extra_index_url(self):
+        """
+        use extra-index-url
+        """
+
+        extra_index_url = 'https://download.pytorch.org/whl/cpu'
+        target_package = 'torch==1.13.0'
+
+        from dynamicPip import DynamicPip
+
+        dynamic_pip = DynamicPip()
+        dynamic_pip.extra_index_url = extra_index_url
+        dynamic_pip.set_mirror_list(proxy_list)
+
+        # install
+        print(f'----- install {target_package} test -----')
+        rtn = dynamic_pip.install_single_package(target_package)
+        print(f'return result code {rtn}\n')
+        self.assertTrue(0 == rtn)
+
+        # check package list
+        print(f'----- list {target_package} test -----')
+        rtn = DynamicPip.list_package()
+        print(f'return result {rtn}\n')
+        self.assertTrue('1.13.0+cpu' == rtn.get('torch'))
+
+        # uninstall single package
+        print(f'----- uninstall {target_package} test -----')
+        rtn = DynamicPip.remove_single_package(target_package)
+        print(f'return result code {rtn}\n')
+        self.assertTrue(0 == rtn)
+
+        del dynamic_pip
+
 
 if __name__ == '__main__':
     unittest.main()
