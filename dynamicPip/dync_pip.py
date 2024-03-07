@@ -91,7 +91,7 @@ class DynamicPip:
 
         return rtn
 
-    def install_single_package(self, *args) -> int:
+    def install_single_package(self, args) -> int:
         """
         install single package
         :param args: package name list and other parameters.
@@ -108,13 +108,16 @@ class DynamicPip:
         rtn = 0
 
         cli_array = [sys.executable, '-m', 'pip', 'install']
-        cli_array += ['-i', self.fastest_host]
+        cli_array.extend(['-i', self.fastest_host])
 
         # determine extra_index_url
         if self.extra_index_url is not None and '' != self.extra_index_url.strip():
-            cli_array += ['--extra-index-url', self.extra_index_url]
+            cli_array.extend(['--extra-index-url', self.extra_index_url])
 
-        cli_array += list(args)
+        if isinstance(args, list):
+            cli_array.extend(args)
+        else:
+            cli_array.append(args)
 
         try:
             rtn = subprocess.check_call(cli_array)
@@ -125,9 +128,9 @@ class DynamicPip:
         return rtn
 
     @staticmethod
-    def remove_single_package(*args) -> int:
+    def remove_single_package(args) -> int:
         """
-        remove single package
+        remove packages
         :param args: package name list and other parameters.
                      refer: https://pip.pypa.io/en/stable/cli/pip_install/
         :return: 0 - success
@@ -138,8 +141,14 @@ class DynamicPip:
 
         rtn = 0
 
+        _cli = [sys.executable, '-m', 'pip', 'uninstall', '-y']
+        if isinstance(args, list):
+            _cli.extend(args)
+        else:
+            _cli.append(args)
+
         try:
-            rtn = subprocess.check_call([sys.executable, '-m', 'pip', 'uninstall', '-y'] + list(args))
+            rtn = subprocess.check_call(_cli)
         except Exception:
             raise RuntimeError(f'Target package can not be removed. '
                                f'Please either try again later or uninstall it manually')

@@ -7,10 +7,10 @@ import unittest
 from dynamicPip import DynamicPip, StaticResources
 
 # declare target package
-target_package = 'numpy==1.21.6'
+target_package = 'numpy==1.26.4'
 target_package_list = [
     target_package,
-    'pandas==1.3.5'
+    'pandas==2.2.1'
 ]
 target_requirements_file_name = './test_req.txt'
 target_requirements__map_file_name = './test_req_map.md'
@@ -43,8 +43,8 @@ class Test004(unittest.TestCase):
         # check package list
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
-        self.assertTrue('1.21.6' == rtn.get('numpy'))
-        self.assertTrue('1.3.5' == rtn.get('pandas'))
+        self.assertTrue('1.26.4' == rtn.get('numpy'))
+        self.assertTrue('2.2.1' == rtn.get('pandas'))
         # backup a copy for further test
         confirm_package_dict = rtn.copy()
 

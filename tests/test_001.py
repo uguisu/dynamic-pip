@@ -7,7 +7,7 @@ import unittest
 from dynamicPip import DynamicPip, StaticResources
 
 # declare target package
-target_package = 'numpy==1.21.6'
+target_package = 'numpy==1.26.4'
 target_package_list = [
     target_package,
     'scikit-learn==1.0.2'
@@ -35,7 +35,7 @@ class Test001(unittest.TestCase):
         print(f'----- list {target_package} test -----')
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
-        self.assertTrue('1.21.6' == rtn.get('numpy'))
+        self.assertTrue('1.26.4' == rtn.get('numpy'))
 
         # uninstall single package
         print(f'----- uninstall {target_package} test -----')
@@ -68,7 +68,7 @@ class Test001(unittest.TestCase):
         print(f'----- list {target_package} test -----')
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
-        self.assertTrue('1.21.6' == rtn.get('numpy'))
+        self.assertTrue('1.26.4' == rtn.get('numpy'))
 
         # uninstall single package
         print(f'----- uninstall {target_package} test -----')
@@ -103,7 +103,7 @@ class Test001(unittest.TestCase):
         # check package list
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
-        self.assertTrue('1.21.6' == rtn.get('numpy'))
+        self.assertTrue('1.26.4' == rtn.get('numpy'))
         self.assertTrue('1.0.2' == rtn.get('scikit-learn'))
 
         # uninstall

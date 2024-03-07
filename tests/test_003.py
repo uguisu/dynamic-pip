@@ -7,7 +7,7 @@ import unittest
 from dynamicPip import DynamicPip
 
 # declare target package
-target_package = 'numpy==1.21.6'
+target_package = 'numpy==1.26.4'
 target_package_list = [
     target_package,
     'scikit-learn==1.0.2'
