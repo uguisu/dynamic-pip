@@ -112,6 +112,7 @@ classDef mynode text-align:left;
 - [x] support extra-index-url
 - [x] export requirements file
 - [x] build requires map
+- [x] install from local file
 
 ## Limitations :construction:
 - [ ] official `inspect` function is still in the experimental stage.
@@ -121,9 +122,7 @@ classDef mynode text-align:left;
 ## Future version
 - [ ] generate a report about all installed packages
 - [ ] find package exist
-- [ ] auto-detect packages with custom version from github
 - [ ] verify hash
-- [ ] install from local file
 - [ ] install from compressed file
 - [ ] install from FTP
 - [ ] dynamic `import`
