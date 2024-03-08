@@ -46,7 +46,7 @@ class Test005(unittest.TestCase):
 
         # install
         print(f'----- install {target_package_numpy} from file test -----')
-        rtn = dynamic_pip.install_single_package(numpy_package)
+        rtn = dynamic_pip.install_package(numpy_package)
         print(f'return result code {rtn}\n')
         self.assertTrue(0 == rtn)
 
@@ -58,7 +58,7 @@ class Test005(unittest.TestCase):
 
         # uninstall single package
         print(f'----- uninstall {target_package_numpy} from file test -----')
-        rtn = DynamicPip.remove_single_package(target_package_numpy)
+        rtn = DynamicPip.remove_package(target_package_numpy)
         print(f'return result code {rtn}\n')
         self.assertTrue(0 == rtn)
 
@@ -77,7 +77,7 @@ class Test005(unittest.TestCase):
 
         # install
         print(f'----- install {target_package_numpy} from multiple file test -----')
-        rtn = dynamic_pip.install_single_package(target_package_list)
+        rtn = dynamic_pip.install_package(target_package_list)
         print(f'return result code {rtn}\n')
         self.assertTrue(0 == rtn)
 
@@ -90,7 +90,7 @@ class Test005(unittest.TestCase):
 
         # uninstall package
         print(f'----- uninstall {target_package_numpy} from multiple file test -----')
-        rtn = DynamicPip.remove_single_package(target_package_list)
+        rtn = DynamicPip.remove_package(target_package_list)
         print(f'return result code {rtn}\n')
         self.assertTrue(0 == rtn)
 

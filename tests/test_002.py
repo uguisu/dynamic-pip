@@ -74,7 +74,7 @@ class Test002(unittest.TestCase):
 
         # install
         print(f'----- install {target_package} test -----')
-        rtn = dynamic_pip.install_single_package(target_package)
+        rtn = dynamic_pip.install_package(target_package)
         print(f'return result code {rtn}\n')
         self.assertTrue(0 == rtn)
 
@@ -86,7 +86,7 @@ class Test002(unittest.TestCase):
 
         # uninstall single package
         print(f'----- uninstall {target_package} test -----')
-        rtn = DynamicPip.remove_single_package(target_package)
+        rtn = DynamicPip.remove_package(target_package)
         print(f'return result code {rtn}\n')
         self.assertTrue(0 == rtn)
 

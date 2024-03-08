@@ -4,6 +4,7 @@ import os.path
 import re
 import subprocess
 import sys
+from typing import Union, List
 
 from dynamicPip import MirrorManager, StaticResources
 from dynamicPip.utility import get_site_packages_path, is_path_exist
@@ -91,9 +92,9 @@ class DynamicPip:
 
         return rtn
 
-    def install_single_package(self, args) -> int:
+    def install_package(self, args: Union[str, List]) -> int:
         """
-        install single package
+        install package(s)
         :param args: package name list and other parameters.
                      refer: https://pip.pypa.io/en/stable/cli/pip_install/
         :return: 0 - success
@@ -128,9 +129,9 @@ class DynamicPip:
         return rtn
 
     @staticmethod
-    def remove_single_package(args) -> int:
+    def remove_package(args: Union[str, List]) -> int:
         """
-        remove packages
+        remove package(s)
         :param args: package name list and other parameters.
                      refer: https://pip.pypa.io/en/stable/cli/pip_install/
         :return: 0 - success
@@ -213,7 +214,7 @@ class DynamicPip:
     @staticmethod
     def export_requirements_file(requirements_file=StaticResources.DEFAULT_REQUIREMENT_FILE):
         """
-        export requirements file
+        export requirement packages into file
         :param requirements_file: requirements file. default file name is 'requirements.txt'
         :return: 0 - success
         """
