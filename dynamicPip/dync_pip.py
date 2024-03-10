@@ -392,3 +392,35 @@ class DynamicPip:
             print(f'Export to {out_path} success.')
         except Exception:
             raise RuntimeError(f'Target requirement map file can not be exported. ')
+
+    def make_sure_packages(self, pkgs: Union[str, List]) -> int:
+        """
+        make sure all package(s) has been installed.
+
+        :param pkgs: package name(with/without version) list.
+        """
+
+        # verify
+        if pkgs is None:
+            raise ValueError('invalid package name')
+
+        rtn = 0
+
+        pkg_dict: dict = self.list_package()
+        missing_list: list = []
+        # go through all target package
+        for item_pkg in pkgs:
+            if pkg_dict.get(item_pkg.split('==')[0]) is None and not item_pkg.endswith('.whl'):
+                # find a package that not installed yet
+                missing_list.append(item_pkg)
+                continue
+
+            if item_pkg.endswith('.whl'):
+                # find a 'whl' file
+                missing_list.append(item_pkg)
+                continue
+
+        if len(missing_list) > 0:
+            rtn = self.install_package(missing_list)
+
+        return rtn
