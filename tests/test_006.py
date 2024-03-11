@@ -139,7 +139,7 @@ class Test006(unittest.TestCase):
         self.assertTrue(0 == rtn)
 
         # check package list
-        print(f'----- list { ",".join(target_package_list) } test -----')
+        print(f'----- list { ",".join(target_package_list_with_file) } test -----')
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
         self.assertTrue('1.26.4' == rtn.get('numpy'))
