@@ -7,17 +7,12 @@ from dynamicPip import DynamicPip
 from test_helper import download_file
 
 # declare target package
-numpy_package = 'numpy-1.26.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl'
-numpy_package_url = ('https://mirrors.aliyun.com/pypi/packages/54/30/'
-                     'c2a907b9443cf42b90c17ad10c1e8fa801975f01cb9764f3f8eb8aea638b/'
-                     'numpy-1.26.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl')
-target_package_numpy = 'numpy==1.26.4'
-
-pandas_package = 'pandas-2.2.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl'
-pandas_package_url = ('https://mirrors.aliyun.com/pypi/packages/1a/5e/'
-                      '71bb0eef0dc543f7516d9ddeca9ee8dc98207043784e3f7e6c08b4a6b3d9/'
-                      'pandas-2.2.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl')
-target_package_pandas = 'pandas==2.2.1'
+importlib_metadata_package = 'importlib_metadata-7.0.2-py3-none-any.whl'
+importlib_metadata_package_url = ('https://mirrors.aliyun.com/pypi/packages/db/62/'
+                                  '6879ab53ad4997b627fc67241a41eabf7163299c59580c6ca4aa5ae6b677/'
+                                  'importlib_metadata-7.0.2-py3-none-any.whl#'
+                                  'sha256=f4bc4c0c070c490abf4ce96d715f68e95923320370efb66143df00199bb6c100')
+target_package_importlib_metadata = 'importlib-metadata==7.0.2'
 
 requests_package = 'requests-2.31.0-py3-none-any.whl'
 requests_package_url = ('https://mirrors.aliyun.com/pypi/packages/70/8e/'
@@ -25,10 +20,9 @@ requests_package_url = ('https://mirrors.aliyun.com/pypi/packages/70/8e/'
                         'requests-2.31.0-py3-none-any.whl')
 target_package_requests = 'requests==2.31.0'
 
-
 target_package_list = [
+    importlib_metadata_package,
     requests_package,
-    pandas_package
 ]
 
 
@@ -40,25 +34,25 @@ class Test005(unittest.TestCase):
         - use default mirror
         """
 
-        download_file(url=numpy_package_url, filename=numpy_package)
+        download_file(url=importlib_metadata_package_url, filename=importlib_metadata_package)
 
         dynamic_pip = DynamicPip()
 
         # install
-        print(f'----- install {target_package_numpy} from file test -----')
-        rtn = dynamic_pip.install_package(numpy_package)
+        print(f'----- install {target_package_list} from file test -----')
+        rtn = dynamic_pip.install_package(importlib_metadata_package)
         print(f'return result code {rtn}\n')
         self.assertTrue(0 == rtn)
 
         # check package list
-        print(f'----- list {target_package_numpy} test -----')
+        print(f'----- list {importlib_metadata_package} test -----')
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
-        self.assertTrue('1.26.4' == rtn.get('numpy'))
+        self.assertTrue('7.0.2' == rtn.get('importlib_metadata'))
 
         # uninstall single package
-        print(f'----- uninstall {target_package_numpy} from file test -----')
-        rtn = DynamicPip.remove_package(target_package_numpy)
+        print(f'----- uninstall {target_package_importlib_metadata} from file test -----')
+        rtn = DynamicPip.remove_package(target_package_importlib_metadata)
         print(f'return result code {rtn}\n')
         self.assertTrue(0 == rtn)
 
@@ -71,25 +65,25 @@ class Test005(unittest.TestCase):
         """
 
         download_file(url=requests_package_url, filename=requests_package)
-        download_file(url=pandas_package_url, filename=pandas_package)
+        download_file(url=importlib_metadata_package_url, filename=importlib_metadata_package)
 
         dynamic_pip = DynamicPip()
 
         # install
-        print(f'----- install {target_package_numpy} from multiple file test -----')
+        print(f'----- install { ",".join(target_package_list) } from multiple file test -----')
         rtn = dynamic_pip.install_package(target_package_list)
         print(f'return result code {rtn}\n')
         self.assertTrue(0 == rtn)
 
         # check package list
-        print(f'----- list {target_package_numpy} from multiple file test -----')
+        print(f'----- list { ",".join(target_package_list) } from multiple file test -----')
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
         self.assertTrue('2.31.0' == rtn.get('requests'))
-        self.assertTrue('2.2.1' == rtn.get('pandas'))
+        self.assertTrue('7.0.2' == rtn.get('importlib_metadata'))
 
         # uninstall package
-        print(f'----- uninstall {target_package_numpy} from multiple file test -----')
+        print(f'----- uninstall { ",".join(target_package_list) } from multiple file test -----')
         rtn = DynamicPip.remove_package(target_package_list)
         print(f'return result code {rtn}\n')
         self.assertTrue(0 == rtn)

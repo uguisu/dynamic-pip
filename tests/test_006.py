@@ -6,7 +6,7 @@ import unittest
 from dynamicPip import DynamicPip
 
 # declare target package
-target_package = 'numpy==1.26.4'
+target_package = 'numpy==1.21.6'
 requests_package = 'requests-2.31.0-py3-none-any.whl'
 target_package_requests = 'requests==2.31.0'
 target_package_list = [
@@ -41,7 +41,7 @@ class Test006(unittest.TestCase):
         print(f'----- list { ",".join(target_package_list) } test -----')
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
-        self.assertTrue('1.26.4' == rtn.get('numpy'))
+        self.assertTrue('1.21.6' == rtn.get('numpy'))
         self.assertTrue('1.0.2' == rtn.get('scikit-learn'))
 
         # call make sure
@@ -54,7 +54,7 @@ class Test006(unittest.TestCase):
         print(f'----- list { ",".join(target_package_list) } test -----')
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
-        self.assertTrue('1.26.4' == rtn.get('numpy'))
+        self.assertTrue('1.21.6' == rtn.get('numpy'))
         self.assertTrue('1.0.2' == rtn.get('scikit-learn'))
 
         del dynamic_pip
@@ -97,7 +97,7 @@ class Test006(unittest.TestCase):
         print(f'----- list { ",".join(target_package_list) } test -----')
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
-        self.assertTrue('1.26.4' == rtn.get('numpy'))
+        self.assertTrue('1.21.6' == rtn.get('numpy'))
         self.assertTrue('1.0.2' == rtn.get('scikit-learn'))
 
         del dynamic_pip
@@ -142,7 +142,7 @@ class Test006(unittest.TestCase):
         print(f'----- list { ",".join(target_package_list_with_file) } test -----')
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
-        self.assertTrue('1.26.4' == rtn.get('numpy'))
+        self.assertTrue('1.21.6' == rtn.get('numpy'))
         self.assertTrue('1.0.2' == rtn.get('scikit-learn'))
         self.assertTrue('2.31.0' == rtn.get('requests'))
 
