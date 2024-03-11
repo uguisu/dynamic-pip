@@ -7,7 +7,7 @@ _Photo by David Dibert: https://www.pexels.com/photo/green-and-gray-evergreen-ca
 Help users to dynamically manage python package resources and bid farewell to the constraints of the `requirements.txt` file.
 
 <p align="center">
-    <img src="https://img.shields.io/badge/Python-3.7%2F3.8%2F3.9-blue" alt="valid for python3.7/3.8/3.9" />
+    <img src="https://img.shields.io/badge/Python-3.7%2F3.8%2F3.9%2F3.10-blue" alt="valid for python3.7/3.8/3.9" />
     <img src="https://img.shields.io/badge/Apache-2.0-blue" alt="license" />
 </p>
 
@@ -114,6 +114,7 @@ classDef mynode text-align:left;
 - [x] export requirements file
 - [x] build requires map
 - [x] install from local file
+- [x] find package exist
 
 ## Limitations :construction:
 - [ ] official `inspect` function is still in the experimental stage.
@@ -122,8 +123,5 @@ classDef mynode text-align:left;
 
 ## Future version
 - [ ] generate a report about all installed packages
-- [ ] find package exist
 - [ ] verify hash
-- [ ] install from compressed file
-- [ ] install from FTP
 - [ ] dynamic `import`
