@@ -4,6 +4,7 @@ import os.path
 import re
 import subprocess
 import sys
+from typing import Union, List
 
 from dynamicPip import MirrorManager, StaticResources
 from dynamicPip.utility import get_site_packages_path, is_path_exist
@@ -91,9 +92,9 @@ class DynamicPip:
 
         return rtn
 
-    def install_single_package(self, *args) -> int:
+    def install_package(self, args: Union[str, List]) -> int:
         """
-        install single package
+        install package(s)
         :param args: package name list and other parameters.
                      refer: https://pip.pypa.io/en/stable/cli/pip_install/
         :return: 0 - success
@@ -108,13 +109,16 @@ class DynamicPip:
         rtn = 0
 
         cli_array = [sys.executable, '-m', 'pip', 'install']
-        cli_array += ['-i', self.fastest_host]
+        cli_array.extend(['-i', self.fastest_host])
 
         # determine extra_index_url
         if self.extra_index_url is not None and '' != self.extra_index_url.strip():
-            cli_array += ['--extra-index-url', self.extra_index_url]
+            cli_array.extend(['--extra-index-url', self.extra_index_url])
 
-        cli_array += list(args)
+        if isinstance(args, list):
+            cli_array.extend(args)
+        else:
+            cli_array.append(args)
 
         try:
             rtn = subprocess.check_call(cli_array)
@@ -125,9 +129,9 @@ class DynamicPip:
         return rtn
 
     @staticmethod
-    def remove_single_package(*args) -> int:
+    def remove_package(args: Union[str, List]) -> int:
         """
-        remove single package
+        remove package(s)
         :param args: package name list and other parameters.
                      refer: https://pip.pypa.io/en/stable/cli/pip_install/
         :return: 0 - success
@@ -138,8 +142,14 @@ class DynamicPip:
 
         rtn = 0
 
+        _cli = [sys.executable, '-m', 'pip', 'uninstall', '-y']
+        if isinstance(args, list):
+            _cli.extend(args)
+        else:
+            _cli.append(args)
+
         try:
-            rtn = subprocess.check_call([sys.executable, '-m', 'pip', 'uninstall', '-y'] + list(args))
+            rtn = subprocess.check_call(_cli)
         except Exception:
             raise RuntimeError(f'Target package can not be removed. '
                                f'Please either try again later or uninstall it manually')
@@ -204,7 +214,7 @@ class DynamicPip:
     @staticmethod
     def export_requirements_file(requirements_file=StaticResources.DEFAULT_REQUIREMENT_FILE):
         """
-        export requirements file
+        export requirement packages into file
         :param requirements_file: requirements file. default file name is 'requirements.txt'
         :return: 0 - success
         """
@@ -382,3 +392,35 @@ class DynamicPip:
             print(f'Export to {out_path} success.')
         except Exception:
             raise RuntimeError(f'Target requirement map file can not be exported. ')
+
+    def make_sure_packages(self, pkgs: Union[str, List]) -> int:
+        """
+        make sure all package(s) has been installed.
+
+        :param pkgs: package name(with/without version) list.
+        """
+
+        # verify
+        if pkgs is None:
+            raise ValueError('invalid package name')
+
+        rtn = 0
+
+        pkg_dict: dict = self.list_package()
+        missing_list: list = []
+        # go through all target package
+        for item_pkg in pkgs:
+            if pkg_dict.get(item_pkg.split('==')[0]) is None and not item_pkg.endswith('.whl'):
+                # find a package that not installed yet
+                missing_list.append(item_pkg)
+                continue
+
+            if item_pkg.endswith('.whl'):
+                # find a 'whl' file
+                missing_list.append(item_pkg)
+                continue
+
+        if len(missing_list) > 0:
+            rtn = self.install_package(missing_list)
+
+        return rtn

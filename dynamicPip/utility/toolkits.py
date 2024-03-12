@@ -91,14 +91,18 @@ def get_meta_data_file_reader() -> MetaDataFileReader:
     :return: MetaDataFileReader instance
     """
 
-    if is_current_python_version_less_than_or_equal((3, 7, 9999)):
-        # py version 3.7 ~
-        from dynamicPip.utility import MetaDataFileReader37
-        meta_reader = MetaDataFileReader37()
-    else:
-        # py version 3.8 ~
-        from dynamicPip.utility import MetaDataFileReader38
-        meta_reader = MetaDataFileReader38()
+    # if is_current_python_version_less_than_or_equal((3, 7, 9999)):
+    #     # py version 3.7 ~
+    #     from dynamicPip.utility import MetaDataFileReader37
+    #     meta_reader = MetaDataFileReader37()
+    # else:
+    #     # py version 3.8 ~
+    #     from dynamicPip.utility import MetaDataFileReader38
+    #     meta_reader = MetaDataFileReader38()
+
+    # TODO importlib.metadata is new function from python 3.8
+    from dynamicPip.utility import MetaDataFileReader37
+    meta_reader = MetaDataFileReader37()
 
     # verify type
     assert isinstance(meta_reader, MetaDataFileReader)

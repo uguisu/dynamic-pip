@@ -10,7 +10,7 @@ from dynamicPip import DynamicPip, StaticResources
 target_package = 'numpy==1.21.6'
 target_package_list = [
     target_package,
-    'pandas==1.3.5'
+    'importlib-metadata==7.0.2'
 ]
 target_requirements_file_name = './test_req.txt'
 target_requirements__map_file_name = './test_req_map.md'
@@ -44,7 +44,7 @@ class Test004(unittest.TestCase):
         rtn = DynamicPip.list_package()
         print(f'return result {rtn}\n')
         self.assertTrue('1.21.6' == rtn.get('numpy'))
-        self.assertTrue('1.3.5' == rtn.get('pandas'))
+        self.assertTrue('7.0.2' == rtn.get('importlib_metadata'))
         # backup a copy for further test
         confirm_package_dict = rtn.copy()
 

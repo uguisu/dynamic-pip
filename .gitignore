@@ -131,4 +131,10 @@ dmypy.json
 # ide
 .idea/
 
+# test related
 test_*.txt
+venv_py37/
+venv_py38/
+venv_py39/
+venv_py310/
+*.whl
