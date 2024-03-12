@@ -1,0 +1,71 @@
+# build:
+#   rm -rf ./build ./dist ./dynamic_pip.egg-info/ && clear && python -m build .
+#
+# upload:
+#   twine check ./dist/*
+#   twine upload dist/*
+#
+# install local:
+#   pip install --upgrade dynamic_pip-XXXX-pyXX-none-any.whl
+#
+# install from PyPi:
+#   pip install dynamic_pip
+#
+# refer:
+# - https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+# - https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dynamic-pip"
+authors = [
+    {name = "xin.he", email = "unknow@dynamic-pip.com"},
+]
+description = "Help users to dynamically manage python package resources"
+requires-python = ">=3.7"
+keywords = ["dynamic", "pip", "packages"]
+license = {text = "Apache 2.0"}
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: Developers',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Unix Shell',
+    'Operating System :: OS Independent',
+    'Topic :: Software Development',
+    'Topic :: Software Development :: Libraries',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+]
+dependencies = [
+    "icmplib==3.0.3"
+]
+readme = {file = "README.md", content-type = "text/markdown"}
+dynamic = ["version", "entry-points"]
+
+[project.urls]
+Homepage = "https://github.com/uguisu/dynamic-pip"
+Documentation = "https://github.com/uguisu/dynamic-pip"
+Repository = "https://github.com/uguisu/dynamic-pip"
+Issues = "https://github.com/uguisu/dynamic-pip/issues"
+
+# refer:
+# - https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/#plugin-entry-points
+# - https://packaging.python.org/en/latest/specifications/entry-points/#entry-points
+[console_scripts]
+dypip = "dynamicPip.__main__:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "dynamicPip.__version__"}
+
+# setuptools-specific configurations
+[tool.setuptools.packages.find]
+# list of folders that contain the packages (["."] by default)
+where = ["."]
+# package names should match these glob patterns (["*"] by default)
+include = ["*"]
+# exclude packages matching these glob patterns (empty by default)
+exclude = ["tests*", "venv*"]
