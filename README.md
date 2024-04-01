@@ -20,6 +20,8 @@ Refer: https://pip.pypa.io/en/stable/cli/pip_install/
 
 Through `DynamicPip` class object, dynamically manage (install, delete, etc.) python packages during the execution of the program. In addition, compared to build-in `pip`, `dynamic-pip` also supports some extended functions.
 
+:books: [Documentation](doc/index.md)  [文档](doc/index_cn.md)
+
 Example: Install the `numpy` package at runtime
 
 ```py
